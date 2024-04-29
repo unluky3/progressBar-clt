@@ -95,7 +95,7 @@
         "watering hole attacks"
     ],
     "lastText": "hack process has ended!",
-    "config_path": "/home/levluky/.config/hack/config.json",
+    "config_path": "~/.config/progressBar-clt/config.json",
     "introWordCount": 75,
     "introRotationCount": 5
 }
