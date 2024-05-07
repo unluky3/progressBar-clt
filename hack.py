@@ -181,9 +181,6 @@ def create_bar(config):
 
     while totalProgress <= 100:
         totalProgress += 1  # Increment total progress
-        
-        totalBarProgress = int(length * (totalProgress / 100))
-        totalBarRemaining = length - int(totalBarProgress)
 
         # Update individual progress for each bar
         for i in range(len(textList)):
@@ -194,6 +191,13 @@ def create_bar(config):
             if fracs[i] <= 0:
                 fracs[i] = 1 
             individualProgress[i] += fracs[i]
+            if individualProgress[i] > 100:
+                individualProgress[i] = 101
+        
+        totalProgressSum = (sum(individualProgress)/len(textList))
+
+        totalBarProgress = int(length * (totalProgressSum / 100))
+        totalBarRemaining = length - int(totalBarProgress)
 
         # Construct progress bars
         progressBarsList = []
@@ -225,7 +229,7 @@ def create_bar(config):
         sys.stdout.write(topMargin + bars)
 
         # Construct total progress bar
-        totalPercent = str(int(totalProgress - 1)) + '%' 
+        totalPercent = str(int(totalProgressSum - 1)) + '%' 
         totalBar = '[' + '#' * int(totalBarProgress) + '-' * int(totalBarRemaining) + ']' 
         buffer = ' ' * (5 - len(totalPercent))
         rightAlign = ' ' * (get_terminal_width() - (len(totalBar) + len(totalBarText) + len(totalPercent) + len(buffer) ))
@@ -265,7 +269,8 @@ def main():
 
     # If config path is not provided, use the default path
     if args.config is None:
-        args.config = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json')
+        args.config = "~/.config/progressBar-clt-main/config.json"
+
 
     # Get absolute path of config file
     config_path = os.path.abspath(args.config)
