@@ -10,7 +10,7 @@ import json
 # Function to get the terminal width
 def get_terminal_width():
     try:
-        columns, _ = os.get_terminal_size()
+        columns, _ = os.get_terminal_size(sys.stdout.fileno())
         return columns
     except OSError:  # If unable to get terminal size
         return None
@@ -225,19 +225,21 @@ def create_bar(config):
 
         bars = ''.join(progressBarsList)
 
-        # Clear previous output and print current progress bars
-        clear_screen
-        sys.stdout.write(topMargin + bars)
-
         # Construct total progress bar
+
         totalPercent = str(int(totalProgressSum - 1)) + '%' 
         totalBar = '[' + '#' * int(totalBarProgress) + '-' * int(totalBarRemaining) + ']' 
         buffer = ' ' * (5 - len(totalPercent))
         rightAlign = ' ' * (get_terminal_width() - (len(totalBar) + len(totalBarText) + len(totalPercent) + len(buffer) ))
         totalBar = totalBarText + rightAlign + totalBar + buffer + totalPercent
+        
+        
+        # Clear previous output and print current progress bars
+        clear_screen
+        sys.stdout.write(topMargin + bars + '\n' + totalBar)
 
         # Print total progress bar
-        sys.stdout.write('\n' + totalBar)
+        #sys.stdout.write('\n' + totalBar)
 
         # Delay between frames
         delay = totalTime / 100
@@ -251,7 +253,6 @@ def create_bar(config):
     sys.stdout.write('\n' + lastText + '\n')
 
 # Function to clear the screen based on the operating system
-"""Clears the terminal screen."""
 if os.name == 'posix':  # Unix/Linux/MacOS
    clear_screen = os.system('clear')
 elif os.name == 'nt':  # Windows
