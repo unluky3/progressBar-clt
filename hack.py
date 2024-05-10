@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import argparse
 import sys
 import time
@@ -131,51 +132,51 @@ def create_bar(config):
     
     for i in range(introRotationCount*2):
 
-      sys.stdout.write('\r' + 'initializing |')
-      time.sleep(0.1)
-      os.system('clear')
-      sys.stdout.write('\r' + 'initializing /')
-      time.sleep(0.1)
-      os.system('clear')
-      sys.stdout.write('\r' + 'initializing -')
-      time.sleep(0.1)
-      os.system('clear')
-      sys.stdout.write('\r' + 'initializing \\')
-      time.sleep(0.1)
-      os.system('clear')
+        sys.stdout.write('\r' + 'initializing |')
+        time.sleep(0.1)
+        clear_screen
+        sys.stdout.write('\r' + 'initializing /')
+        time.sleep(0.1)
+        clear_screen
+        sys.stdout.write('\r' + 'initializing -')
+        time.sleep(0.1)
+        clear_screen
+        sys.stdout.write('\r' + 'initializing \\')
+        time.sleep(0.1)
+        clear_screen
 
     sys.stdout.write('\r' + 'initializing |')
 
     for i in range(introWordCount):
-      sys.stdout.write('\n' + random.choice(textList))
-      time.sleep(random.choice(timings))
+        sys.stdout.write('\n' + random.choice(textList))
+        time.sleep(random.choice(timings))
 
     sys.stdout.write('\n\n\n'+ 'All Done!')
 
     time.sleep(1)
 
-    os.system("clear")
+    clear_screen
 
     for i in range(introRotationCount*2):
 
-      sys.stdout.write('\r' + 'All Done, now starting critical processes |')
-      time.sleep(0.1)
-      os.system('clear')
-      sys.stdout.write('\r' + 'All Done, now starting critical processes /')
-      time.sleep(0.1)
-      os.system('clear')
-      sys.stdout.write('\r' +'All Done, now starting critical processes -')
-      time.sleep(0.1)
-      os.system('clear')
-      sys.stdout.write('\r' +  'All Done, now starting critical processes \\')
-      time.sleep(0.1)
-      os.system('clear')
+        sys.stdout.write('\r' + 'All Done, now starting critical processes |')
+        time.sleep(0.1)
+        clear_screen
+        sys.stdout.write('\r' + 'All Done, now starting critical processes /')
+        time.sleep(0.1)
+        clear_screen
+        sys.stdout.write('\r' +'All Done, now starting critical processes -')
+        time.sleep(0.1)
+        clear_screen
+        sys.stdout.write('\r' +  'All Done, now starting critical processes \\')
+        time.sleep(0.1)
+        clear_screen
 
     sys.stdout.write('\r' + 'All Done, now starting critical processes |')
 
     time.sleep(1)
 
-    os.system("clear")
+    clear_screen
 
     time.sleep(1)
 
@@ -184,7 +185,7 @@ def create_bar(config):
 
         # Update individual progress for each bar
         for i in range(len(textList)):
-        # Add each fraction to individualProgress[i]
+            # Add each fraction to individualProgress[i]
             fractions = split_float(totalTime, quantity - 1)
             for frac in fractions:
                 fracs.append(int(abs(frac)))
@@ -225,7 +226,7 @@ def create_bar(config):
         bars = ''.join(progressBarsList)
 
         # Clear previous output and print current progress bars
-        os.system('clear')
+        clear_screen
         sys.stdout.write(topMargin + bars)
 
         # Construct total progress bar
@@ -246,8 +247,15 @@ def create_bar(config):
         topMargin = ''
 
     time.sleep(5)
-    os.system("clear")
+    clear_screen
     sys.stdout.write('\n' + lastText + '\n')
+
+# Function to clear the screen based on the operating system
+"""Clears the terminal screen."""
+if os.name == 'posix':  # Unix/Linux/MacOS
+   clear_screen = os.system('clear')
+elif os.name == 'nt':  # Windows
+    clear_screen = os.system('cls')
 
 # Main function
 def main():
@@ -269,7 +277,7 @@ def main():
 
     # If config path is not provided, use the default path
     if args.config is None:
-        args.config = "~/.config/progressBar-clt-main/config.json"
+        args.config = os.path.expanduser("~/.config/progressBar-clt-main/config.json")
 
 
     # Get absolute path of config file
@@ -293,8 +301,6 @@ def main():
     if args.config:
         config["config_path"] = os.path.abspath(args.config)
         save_config('config.json', config)
-
-
 
 # Execute main function if script is run directly
 if __name__ == "__main__":
