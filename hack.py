@@ -7,11 +7,11 @@ import os
 import random
 import json
 
-# Function to get the terminal width
-def get_terminal_width():
+# Function to get the terminal width and height
+def get_terminal_size():
     try:
-        columns, _ = os.get_terminal_size(sys.stdout.fileno())
-        return columns
+        columns, rows = os.get_terminal_size()
+        return columns, rows
     except OSError:  # If unable to get terminal size
         return None
 
@@ -117,9 +117,7 @@ def save_config(filename, config):
 def create_bar(config):
     totalProgress = 0
     individualProgress = [0] * len(config["textList"])  # Initialize individual progress for each bar
-    progressBarsList = []
     fracs = []
-    topMargin = '\n'
     length = config["length"]
     totalBarText = config["totalBarText"]
     introRotationCount = config["introRotationCount"]
@@ -128,22 +126,21 @@ def create_bar(config):
     totalTime = config["totalTime"]
     lastText = config["lastText"]
     quantity = len(textList)
-    timings = [0.01,1.5,0.25,0,1,0.01,0.25,0.1,0.01,0.25,0.02,0.01,0.25,0.2,0.25,0,0.1,0.01,0.25,0.1,0.01,0.25,0.02,0.01,0.25,0.2,0.25,0,0.1,0.01,0.25,0.1,0.01,0.25,0.02,0.01,0.25,0.2,]
-    
-    for i in range(introRotationCount*2):
+    timings = [0.01, 1.5, 0.25, 0, 1, 0.01, 0.25, 0.1, 0.01, 0.25, 0.02, 0.01, 0.25, 0.2, 0.25, 0, 0.1, 0.01, 0.25, 0.1, 0.01, 0.25, 0.02, 0.01, 0.25, 0.2, 0.25, 0, 0.1, 0.01, 0.25, 0.1, 0.01, 0.25, 0.02, 0.01, 0.25, 0.2]
 
+    for i in range(introRotationCount * 2):
         sys.stdout.write('\r' + 'initializing |')
         time.sleep(0.1)
-        clear_screen
+        clear_screen()
         sys.stdout.write('\r' + 'initializing /')
         time.sleep(0.1)
-        clear_screen
+        clear_screen()
         sys.stdout.write('\r' + 'initializing -')
         time.sleep(0.1)
-        clear_screen
+        clear_screen()
         sys.stdout.write('\r' + 'initializing \\')
         time.sleep(0.1)
-        clear_screen
+        clear_screen()
 
     sys.stdout.write('\r' + 'initializing |')
 
@@ -151,32 +148,31 @@ def create_bar(config):
         sys.stdout.write('\n' + random.choice(textList))
         time.sleep(random.choice(timings))
 
-    sys.stdout.write('\n\n\n'+ 'All Done!')
+    sys.stdout.write('\n\n\n' + 'All Done!')
 
     time.sleep(1)
 
-    clear_screen
+    clear_screen()
 
-    for i in range(introRotationCount*2):
-
+    for i in range(introRotationCount * 2):
         sys.stdout.write('\r' + 'All Done, now starting critical processes |')
         time.sleep(0.1)
-        clear_screen
+        clear_screen()
         sys.stdout.write('\r' + 'All Done, now starting critical processes /')
         time.sleep(0.1)
-        clear_screen
-        sys.stdout.write('\r' +'All Done, now starting critical processes -')
+        clear_screen()
+        sys.stdout.write('\r' + 'All Done, now starting critical processes -')
         time.sleep(0.1)
-        clear_screen
-        sys.stdout.write('\r' +  'All Done, now starting critical processes \\')
+        clear_screen()
+        sys.stdout.write('\r' + 'All Done, now starting critical processes \\')
         time.sleep(0.1)
-        clear_screen
+        clear_screen()
 
     sys.stdout.write('\r' + 'All Done, now starting critical processes |')
 
     time.sleep(1)
 
-    clear_screen
+    clear_screen()
 
     time.sleep(1)
 
@@ -190,12 +186,12 @@ def create_bar(config):
             for frac in fractions:
                 fracs.append(int(abs(frac)))
             if fracs[i] <= 0:
-                fracs[i] = 1 
+                fracs[i] = 1
             individualProgress[i] += fracs[i]
             if individualProgress[i] > 100:
                 individualProgress[i] = 101
-        
-        totalProgressSum = (sum(individualProgress)/len(textList))
+
+        totalProgressSum = (sum(individualProgress) / len(textList))
 
         totalBarProgress = int(length * (totalProgressSum / 100))
         totalBarRemaining = length - int(totalBarProgress)
@@ -204,8 +200,8 @@ def create_bar(config):
         progressBarsList = []
         for i in range(len(textList)):
             # Calculate percentage and progress for the current bar
-            percent = str(int(min(individualProgress[i], 100))) + '%'  
-            barProgress = min(individualProgress[i], 100) / 100 * length  
+            percent = str(int(min(individualProgress[i], 100))) + '%'
+            barProgress = min(individualProgress[i], 100) / 100 * length
             barRemaining = length - int(barProgress)
 
             # Construct the progress bar string
@@ -216,8 +212,8 @@ def create_bar(config):
                 bar = '[' + '#' * int(barProgress) + '-' * int(barRemaining) + ']'
 
             # Calculate margin to align the bar with text and percentage
-            indBuffer = ' ' * (5 - len(percent))  
-            margin = ' ' * (get_terminal_width() - (len(bar) + len(textList[i]) + len(percent) + len(indBuffer)))  
+            indBuffer = ' ' * (5 - len(percent))
+            margin = ' ' * (get_terminal_size()[0] - (len(bar) + len(textList[i]) + len(percent) + len(indBuffer)))
 
             # Construct the final line
             line = textList[i] + margin + bar + indBuffer + percent + '\n'
@@ -226,37 +222,38 @@ def create_bar(config):
         bars = ''.join(progressBarsList)
 
         # Construct total progress bar
-
-        totalPercent = str(int(totalProgressSum - 1)) + '%' 
-        totalBar = '[' + '#' * int(totalBarProgress) + '-' * int(totalBarRemaining) + ']' 
+        totalPercent = str(int(totalProgressSum - 1)) + '%'
+        totalBar = '[' + '#' * int(totalBarProgress) + '-' * int(totalBarRemaining) + ']'
         buffer = ' ' * (5 - len(totalPercent))
-        rightAlign = ' ' * (get_terminal_width() - (len(totalBar) + len(totalBarText) + len(totalPercent) + len(buffer) ))
+        rightAlign = ' ' * (get_terminal_size()[0] - (len(totalBar) + len(totalBarText) + len(totalPercent) + len(buffer)))
         totalBar = totalBarText + rightAlign + totalBar + buffer + totalPercent
-        
-        
-        # Clear previous output and print current progress bars
-        clear_screen
-        sys.stdout.write(topMargin + bars + '\n' + totalBar)
 
-        # Print total progress bar
-        #sys.stdout.write('\n' + totalBar)
+        # Only display the last N bars where N is the available number of rows
+        display_bars = bars.split('\n')[-get_terminal_size()[1] + 1:]
+        display_bars_str = '\n'.join(display_bars)
+
+        # Clear previous output and print current progress bars
+        clear_screen()
+        sys.stdout.write(display_bars_str + '\n' + totalBar)
+        sys.stdout.flush()
 
         # Delay between frames
         delay = totalTime / 100
         time.sleep(delay)
 
-        # Clearing top margin
-        topMargin = ''
-
     time.sleep(5)
-    clear_screen
+    clear_screen()
     sys.stdout.write('\n' + lastText + '\n')
 
 # Function to clear the screen based on the operating system
 if os.name == 'posix':  # Unix/Linux/MacOS
-   clear_screen = os.system('clear')
+    def clear_screen():
+        columns, rows = get_terminal_size()
+        os.system(f'\033[{rows}F\033[J')  # Move cursor to last row and clear from cursor to end of screen
 elif os.name == 'nt':  # Windows
-    clear_screen = os.system('cls')
+    def clear_screen():
+        _, rows = get_terminal_size()
+        os.system(f'cls')
 
 # Main function
 def main():
@@ -279,7 +276,6 @@ def main():
     # If config path is not provided, use the default path
     if args.config is None:
         args.config = os.path.expanduser("~/.config/progressBar-clt-main/config.json")
-
 
     # Get absolute path of config file
     config_path = os.path.abspath(args.config)
